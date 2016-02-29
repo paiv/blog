@@ -1,0 +1,18 @@
+---
+layout: default
+show_index: false
+---
+<h1>Posts</h1>
+
+<ul>
+{% for post in site.posts %}
+  <li>
+    <span>{{ post.date | date: site.date_format }}</span>
+    <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title | escape }}</a>
+  </li>
+{% endfor %}
+</ul>
+
+<h3>
+  <a href="{{ site.baseurl }}/about.html">About</a>
+</h3>

@@ -1,0 +1,14 @@
+
+.post-link {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-left: 0.5em;
+}
+
+img.avatar {
+  width: 4em;
+  height: 4em;
+  border-radius: 2em;
+  float: left;
+  margin-right: 1em;
+}
