@@ -1,2 +1,3 @@
 # paiv
-personal blog
+blog:
+[paiv.github.io/blog/](https://paiv.github.io/blog/)
