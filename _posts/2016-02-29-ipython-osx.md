@@ -1,7 +1,7 @@
 ---
-title: HOWTO: Setting up IPython on OSX
+title: "HOWTO: Setting up IPython on OSX"
 tags: osx, macports, python, numpy, scipy, matplotlib, ipython, jupyter, notebooks, anaconda
-date: 2016-02-29 11:15:00 +0200
+date: "2016-02-29 11:15:00 +0200"
 ---
 
 TLDR; either use [Anaconda] [CONDA-FOLLOWUP], or an older matplotlib.
