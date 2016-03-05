@@ -1,5 +1,10 @@
 <head>
   <meta charset="utf-8">
+  {% if page.excerpt %}
+  <meta name="description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}">
+  {% endif %}
+
+  {% feed_meta %}
 
   <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
 

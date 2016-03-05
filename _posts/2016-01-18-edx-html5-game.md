@@ -1,9 +1,10 @@
 ---
 title: "A one-level game in HTML5"
-tags: html5, javascript, game, game engine, canvas, gamepad, path finding, html
+tags: [html5, javascript, game, game engine, canvas, gamepad, path finding, html]
 date: "2016-01-18 09:21"
 ---
-Here is a little one-level game I did in [HTML5 course][COURSE] on edX:
+
+Here is a little one-level game I did in [HTML5 course][COURSE] on edX.
 
 [<img src="https://github.com/paiv/html5.2x.game/raw/master/img/screenshot.png" width="240" />][GAME]
 

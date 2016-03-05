@@ -1,6 +1,6 @@
 ---
 title: "HOWTO: Setting up IPython on OSX"
-tags: osx, macports, python, numpy, scipy, matplotlib, ipython, jupyter, notebooks, anaconda
+tags: [osx, macports, python, numpy, scipy, matplotlib, ipython, jupyter, notebooks, anaconda]
 date: "2016-02-29 11:15:00 +0200"
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "A Few Useful Things to Know about Machine Learning"
-tags: machine learning, ml, stats, data science
+tags: [machine learning, ml, stats, data science]
 date: "2016-03-04 22:09:00 +0200"
 ---
 
