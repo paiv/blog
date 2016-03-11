@@ -1,12 +1,12 @@
 ---
-title: "HOWTO: Setting up IPython on OSX"
+title: "Installing scientific Python on OSX"
 tags: [osx, macports, python, numpy, scipy, matplotlib, ipython, jupyter, notebooks, anaconda]
 date: "2016-02-29 11:15:00 +0200"
 ---
 
-TLDR; either use [Anaconda] [CONDA-FOLLOWUP], or an older matplotlib.
+TLDR; either use [Anaconda][CONDA-FOLLOWUP] (better performance), or an older matplotlib.
 
-I'm taking Stanford's [CS231n] class, and needed a scientific computing environment in python:
+I'm taking Stanford's [CS231n] class, and needed a scientific computing environment in Python:
 
 * NumPy
 * SciPy
@@ -32,10 +32,10 @@ RuntimeError: Python is not installed as a framework. ... see 'Working with Matp
 
 There are workarounds:
 
-* [matplotlib FAQ] [MPLFAQ] suggests a wrapper script with proper environment variables for python
-* [switch to Qt backend] [SO-BACKEND]
+* [matplotlib FAQ][MPLFAQ] suggests a wrapper script with proper environment variables for python
+* [switch to Qt backend][SO-BACKEND]
 * ditch Macports, install [Anaconda]
-* [use older matplotlib] [OLDLIB-COMMENT]
+* [use older matplotlib][OLDLIB-COMMENT]
 
 After playing for a while with first three options, I found that installing older matplotlibs works just fine.
 
@@ -54,12 +54,12 @@ jupiter notebook
 ... opens http://127.0.0.1:8888
 
 
-* [follow-up: Anaconda] [CONDA-FOLLOWUP]
+* [follow-up: Anaconda][CONDA-FOLLOWUP] for improved performance
 
 
 [CS231n]: http://cs231n.github.io/ "CS231n: Convolutional Neural Networks for Visual Recognition"
 [JUPYTER]: https://jupyter.org/
-[CONDA-FOLLOWUP]: {{site.baseurl}}{% post_url 2016-02-29-anaconda %} "Followup: Setting up Anaconda"
+[CONDA-FOLLOWUP]: {{site.baseurl}}{% post_url 2016-02-29-anaconda %} "Followup: Installing Anaconda"
 [ANACONDA]: https://www.continuum.io/downloads
 [MACPORTS]: https://www.macports.org/
 [PIP]: https://pypi.python.org/pypi/pip
