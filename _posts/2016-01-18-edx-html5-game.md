@@ -6,7 +6,7 @@ date: "2016-01-18 09:21"
 
 Here is a little one-level game I did in [HTML5 course][COURSE] on edX.
 
-[<img src="https://github.com/paiv/html5.2x.game/raw/master/img/screenshot.png" width="240" height="219" />][GAME]
+[<img src="{% include page_assets %}/screenshot.png" width="240" height="219" alt="screenshot" />][GAME]
 
 [https://paiv.github.io/html5.2x.game/][GAME]
 
