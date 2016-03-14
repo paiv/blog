@@ -1,7 +1,7 @@
 ---
 title: "Installing scientific Python on OSX"
 tags: [osx, macports, python, numpy, scipy, matplotlib, ipython, jupyter, notebooks, anaconda]
-date: "2016-02-29 11:15:00 +0200"
+date: "2016-02-29 09:15:02"
 ---
 
 TLDR; either use [Anaconda][CONDA-FOLLOWUP] (better performance), or an older matplotlib.
@@ -54,16 +54,27 @@ jupiter notebook
 ... opens http://127.0.0.1:8888
 
 
-* [follow-up: Anaconda][CONDA-FOLLOWUP] for improved performance
+But when compared against [Anaconda setup][CONDA-FOLLOWUP], matrix multiplication was roughly five times slower. The difference comes from linear algebra backend used:
+
+```python
+import numpy as np
+np.show_config()
+```
+
+This setup is using Apple's Accelerate framework, and Anaconda is based on [Intel's MKL][MKL]. If you need better performance, you have to [rebuild NumPy with MKL][RMCGIBBO], or just install Anaconda.
+
+* [Followup: Installing Anaconda][CONDA-FOLLOWUP]
 
 
 [CS231n]: http://cs231n.github.io/ "CS231n: Convolutional Neural Networks for Visual Recognition"
 [JUPYTER]: https://jupyter.org/
 [CONDA-FOLLOWUP]: {{site.baseurl}}{% post_url 2016-02-29-anaconda %} "Followup: Installing Anaconda"
 [ANACONDA]: https://www.continuum.io/downloads
+[MKL]: https://software.intel.com/en-us/intel-mkl "Intel Math Kernel Library"
 [MACPORTS]: https://www.macports.org/
 [PIP]: https://pypi.python.org/pypi/pip
 [VIRTUALENV]: https://pypi.python.org/pypi/virtualenv
 [MPLFAQ]: http://matplotlib.org/faq/virtualenv_faq.html "Working with Matplotlib in Virtual environments"
 [SO-BACKEND]: http://stackoverflow.com/a/33180744
 [OLDLIB-COMMENT]: http://www.pyimagesearch.com/2015/08/24/resolved-matplotlib-figures-not-showing-up-or-displaying/#comment-388489
+[RMCGIBBO]: https://gist.github.com/rmcgibbo/4950848 "Scientific Python From Source"
