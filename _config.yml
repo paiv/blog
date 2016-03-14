@@ -19,6 +19,7 @@ defaults:
   -
     values:
       show_index: true
+      author: Pavel Ivashkov
   -
     scope:
       type: posts

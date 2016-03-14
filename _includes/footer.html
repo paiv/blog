@@ -1,3 +1,6 @@
-<div>
-  Copyright &copy; 2016, Pavel Ivashkov
+<div class="copyright">
+  &copy; {% if page.copyright %}{{ page.copyright | escape }}
+    {% else %}
+      {{ page.date | default: 'now' | date: "%Y" }} {{ page.author | escape }}
+    {% endif %}
 </div>
