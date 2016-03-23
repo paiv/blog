@@ -65,6 +65,10 @@
 
     var input = document.createElement('textarea');
     input.classList.add('highlight', 'console');
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('autocapitalize', 'off');
+    
     input.value = '> 2+2';
     widget.appendChild(input);
 
