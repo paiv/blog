@@ -1,0 +1,28 @@
+
+$grid-columns: 12;
+
+@function grid-width($n) {
+  @return (100% / $grid-columns * $n);
+}
+
+
+.row:after {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+
+[class*="col-"] {
+  float: left;
+  min-height: 1px;
+  width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+  $i: $grid-columns;
+  @while $i > 0 {
+    .col-#{$i} { width: grid-width($i); }
+    $i: $i - 1;
+  }
+}

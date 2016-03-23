@@ -4,11 +4,13 @@ show_index: false
 ---
 <h1>Posts</h1>
 
-<ul>
+<ul class="post-list">
 {% for post in site.posts %}
   <li>
-    <span>{{ post.date | date: site.date_format }}</span>
     <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title | escape }}</a>
+    <span class="post-meta">{{ post.date | date_to_string }}</span>
+    <br />
+    <span class="post-excerpt">{{ post.excerpt | strip_html }}</span>
   </li>
 {% endfor %}
 </ul>
