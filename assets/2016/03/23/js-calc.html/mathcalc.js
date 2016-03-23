@@ -67,11 +67,11 @@ var MathCalc = (function(module) {
 
     proto.parse = function(content) {
       this.error = undefined;
-      var tokens = lexer(content);
-      var ast = parser(tokens);
+      var lex = lexer(content);
+      var ast = parser(lex.tokens);
       var func = emitter(ast.root);
       return {
-        error: ast.error,
+        error: lex.error || ast.error,
         func: func
       };
     };
@@ -379,14 +379,20 @@ var MathCalc = (function(module) {
     function lexer(content) {
       var tokens = [];
       var pos = 0;
-      var token;
+      var token, error;
       while ((token = tokenizer(content, pos)) !== undefined) {
-        if (token.id !== 'Space') {
+        if (token.error) {
+          error = token.error;
+        }
+        else if (token.id !== 'Space') {
           tokens.push(token);
         }
         pos = token.end;
       }
-      return tokens;
+      return {
+        tokens: tokens,
+        error: error
+      };
     }
 
     var Tokens = /^(?:(\s+)|((?:\d+e[-+]?\d+|\d+(?:\.\d*)?|\d*\.\d+))|(\+)|(\-)|(\*)|(\/)|(%)|(\^)|(\()|(\))|(pi)\b|(e)\b|(inf)\b|([a-zA-Z]\w*))/i;
@@ -398,8 +404,13 @@ var MathCalc = (function(module) {
 
       var match = Tokens.exec(s);
       if (match === null) {
-        logger.warn('Unparsed string "%s"', s);
-        return;
+        var endPos = skipInvalidChars(content, pos);
+        var error = { pos: pos, text: 'Unexpected symbol "' + content.slice(pos, endPos) + '"' };
+        logger.warn('%s at %d', error.text, error.pos);
+        return {
+          error: error,
+          end: endPos
+        };
       }
 
       for (var i = 0, len = TokenIds.length; i < len; i++) {
@@ -414,6 +425,16 @@ var MathCalc = (function(module) {
           };
         }
       }
+    }
+
+    function skipInvalidChars(content, pos) {
+      for (var len = content.length; pos < len; pos++) {
+        var s = content.slice(pos);
+        if (s.length === 0) break;
+        var match = Tokens.exec(s);
+        if (match !== null) break;
+      }
+      return pos;
     }
 
     var parseNumber = Number.parseFloat || parseFloat;
