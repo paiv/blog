@@ -1,4 +1,22 @@
-// author: Pavel Ivashkov, github.com/paiv
+//
+// MathCalc: a parser for basic mathematical expressions
+// Try it here: https://paiv.github.io/blog/2016/03/23/js-calc.html
+//
+//
+// Copyright (c) 2016, Pavel Ivashkov, github.com/paiv
+//
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+// REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+// INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+// LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+// OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+// PERFORMANCE OF THIS SOFTWARE.
+
 'use strict';
 
 var MathCalc = (function(module) {
@@ -43,13 +61,19 @@ var MathCalc = (function(module) {
   var MathExpression = (function() {
     var logger = new Logger('PARSER', Logger.NONE);
     var emitLogger = new Logger('EMIT', Logger.NONE);
+
     var MathExpression = function() {};
     var proto = MathExpression.prototype;
 
     proto.parse = function(content) {
+      this.error = undefined;
       var tokens = lexer(content);
       var ast = parser(tokens);
-      return emitter(ast);
+      var func = emitter(ast.root);
+      return {
+        error: ast.error,
+        func: func
+      };
     };
 
     function emitter(ast) {
@@ -145,38 +169,51 @@ var MathCalc = (function(module) {
 
 
     function parser(tokens) {
-      var stack = [];
+      var state = {
+        tokens: tokens,
+        pos: 0,
+        stack: []
+      };
 
-      for (var pos = 0, len = tokens.length, done = false; !done && pos <= len; ) {
-        var token = tokens[pos];
-        var top = stack[stack.length - 1];
+      for (var tokenCount = 0, len = tokens.length, done = false; !done && tokenCount <= len; ) {
+        var token = tokens[tokenCount];
+        var top = state.stack[state.stack.length - 1];
 
         var key = (top ? top.id : '(empty)') + ':' + (token ? token.id : '(eof)');
         var action = ShiftReduce[key];
 
         switch (action) {
           case SHIFT:
-            logger.debug('shift %s %o', key, debug_stack(stack));
-            stack = parser_shift(stack, token);
-            pos++;
+            logger.debug('shift %s %o', key, debug_stack(state.stack));
+            state = parser_shift(state, token);
+            tokenCount++;
             break;
           case REDUCE:
-            logger.debug('reduce %s %o', key, debug_stack(stack));
-            stack = parser_reduce(stack, token);
+            logger.debug('reduce %s %o', key, debug_stack(state.stack));
+            state = parser_reduce(state, token);
             break;
           case DONE:
-            logger.debug('done %s %o', key, debug_stack(stack));
+            logger.debug('done %s %o', key, debug_stack(state.stack));
             done = true;
             break;
           default:
-            if (token !== undefined)
-              logger.warn('Unexpected token "%s" at %d (%s)', token.string, token.pos, key);
-            else
-              logger.warn('Unexpected eof (%s)', key);
+            if (token !== undefined) {
+              var error = { pos: token.pos, text: 'Unexpected token "' + token.string + '"' };
+              state.error = error;
+              logger.warn('%s at %d (%s)', error.text, error.pos, key);
+            }
+            else {
+              var error = { text: 'Unexpected EOF' };
+              state.error = error;
+              logger.warn('%s (%s)', error.text, key);
+            }
             done = true;
         }
       }
-      return stack.pop();
+      return {
+        root: state.stack.pop(),
+        error: state.error
+      };
     }
 
     function debug_stack(stack) {
@@ -185,143 +222,157 @@ var MathCalc = (function(module) {
       return '';
     }
 
-    function parser_shift(stack, token) {
-      stack = stack.slice();
-      stack.push(token);
-      return stack;
+    function parser_shift(state, token) {
+      return parser_splice(state, 0, token);
     }
 
-    function parser_reduce(stack, token) {
-      var top = stack[stack.length - 1];
+    function parser_splice(state, ntop, item) {
+      var stack = state.stack.slice(0, state.stack.length - ntop);
+      var pos = state.pos;
+      if (item) {
+        stack.push(item);
+        if (item.pos !== undefined) pos = item.pos;
+      }
+      return {
+        tokens: state.tokens,
+        pos: pos,
+        stack: stack,
+        error: state.error
+      };
+    }
+
+    function parser_reduce(state, token) {
+      var top = getTop(state, 0);
       switch (top.id) {
         case 'Sums':
-          return parser_reduce_expr(stack);
+          return parser_reduce_expr(state);
         case 'Prod':
-          return parser_reduce_sums(stack);
+          return parser_reduce_sums(state);
         case 'Power':
         case 'Unary':
-          return parser_reduce_power(stack);
+          return parser_reduce_power(state);
         case 'Parens':
-          return parser_reduce_unary_op(stack);
+          return parser_reduce_unary_op(state);
         case 'Value':
         case 'RParen':
-          return parser_reduce_parens(stack);
+          return parser_reduce_parens(state);
         case 'Number':
         case 'PI':
         case 'E':
         case 'INF':
         case 'Var':
-          return parser_reduce_value(stack);
+          return parser_reduce_value(state);
       }
-      return stack;
+      return state;
     }
 
-    function parser_reduce_expr(stack) {
-      var top = stack[stack.length - 1];
+    function getTop(state, index) {
+      if (index === undefined) index = 0;
+      return state.stack[state.stack.length - (index + 1)];
+    }
+
+    function parser_reduce_expr(state) {
+      var top = getTop(state, 0);
       var expr = {
         id: 'Expr',
         expr: top,
       };
-      return parser_splice(stack, 1, expr);
+      return parser_splice(state, 1, expr);
     }
 
-    function parser_reduce_sums(stack) {
-      return parser_reduce_binary_op(stack, ['Plus', 'Minus'], 'Sums');
+    function parser_reduce_sums(state) {
+      return parser_reduce_binary_op(state, ['Plus', 'Minus'], 'Sums');
     }
 
-    function parser_reduce_product(stack) {
-      return parser_reduce_binary_op(stack, ['Mul', 'Div', 'Mod'], 'Prod');
+    function parser_reduce_product(state) {
+      return parser_reduce_binary_op(state, ['Mul', 'Div', 'Mod'], 'Prod');
     }
 
-    function parser_reduce_binary_op(stack, ops, id) {
-      var left = stack[stack.length - 3];
-      var oper = stack[stack.length - 2];
-      var right = stack[stack.length - 1];
+    function parser_reduce_binary_op(state, ops, id) {
+      var left = getTop(state, 2);
+      var oper = getTop(state, 1);
+      var right = getTop(state, 0);
       var expr = { id: id };
 
       if (oper !== undefined && ops.indexOf(oper.id) !== -1) {
         expr.op = oper;
         expr.left = left;
         expr.right = right;
-        return parser_splice(stack, 3, expr);
+        return parser_splice(state, 3, expr);
       }
 
       expr.expr = right;
-      return parser_splice(stack, 1, expr);
+      return parser_splice(state, 1, expr);
     }
 
-    function parser_reduce_power(stack) {
-      var oper = stack[stack.length - 2];
-      var top = stack[stack.length - 1];
+    function parser_reduce_power(state) {
+      var oper = getTop(state, 1);
+      var top = getTop(state, 0);
 
       if (top !== undefined && top.id === 'Unary') {
-        var unary = parser_reduce_unary_op(stack, false);
+        var unary = parser_reduce_unary_op(state, false);
         if (unary) return unary;
 
         var expr = { id: 'Power', expr: top };
-        return parser_splice(stack, 1, expr);
+        return parser_splice(state, 1, expr);
       }
 
       if (top !== undefined && top.id === 'Power' && oper !== undefined && oper.id === 'Pow') {
-        return parser_reduce_binary_op(stack, ['Pow'], 'Power');
+        return parser_reduce_binary_op(state, ['Pow'], 'Power');
       }
 
-      return parser_reduce_product(stack);
+      return parser_reduce_product(state);
     }
 
     var UNARY_LEFT_TERMS = ['Pow', 'Mul', 'Div', 'Mod', 'Plus', 'Minus', 'LParen'];
 
-    function parser_reduce_unary_op(stack, optional) {
-      var left = stack[stack.length - 3];
-      var oper = stack[stack.length - 2];
-      var right = stack[stack.length - 1];
+    function parser_reduce_unary_op(state, optional) {
+      var left = getTop(state, 2);
+      var oper = getTop(state, 1);
+      var right = getTop(state, 0);
       var expr = { id: 'Unary' };
 
       if (oper !== undefined && (oper.id === 'Minus' || oper.id === 'Plus') &&
           (left === undefined || UNARY_LEFT_TERMS.indexOf(left.id) !== -1)) {
         expr.op = oper;
         expr.right = right;
-        return parser_splice(stack, 2, expr);
+        return parser_splice(state, 2, expr);
       }
 
       if (optional !== false) {
         expr.expr = right;
-        return parser_splice(stack, 1, expr);
+        return parser_splice(state, 1, expr);
       }
     }
 
-    function parser_reduce_parens(stack) {
-      var left = stack[stack.length - 3];
-      var middle = stack[stack.length - 2];
-      var right = stack[stack.length - 1];
+    function parser_reduce_parens(state) {
+      var left = getTop(state, 2);
+      var middle = getTop(state, 1);
+      var right = getTop(state, 0);
       var expr = { id: 'Parens' };
 
       if (right.id === 'RParen') {
-        if (left.id !== 'LParen') {
-          logger.warn('Unmatched paren at %d', right.pos);
-          return;
+        if (left === undefined || left.id !== 'LParen') {
+          var error = { pos: right.pos, text: 'Unmatched paren' };
+          state.error = error;
+          logger.warn('%s at %d', error.text, error.pos);
+          return parser_splice(state, 1);
         }
         expr.expr = middle;
-        return parser_splice(stack, 3, expr);
+        return parser_splice(state, 3, expr);
       }
 
       expr.expr = right;
-      return parser_splice(stack, 1, expr);
+      return parser_splice(state, 1, expr);
     }
 
-    function parser_reduce_value(stack) {
-      var top = stack[stack.length - 1];
+    function parser_reduce_value(state) {
+      var top = getTop(state, 0);
       var expr = {
         id: 'Value',
         token: top,
       };
-      return parser_splice(stack, 1, expr);
-    }
-
-    function parser_splice(stack, ntop, item) {
-      stack = stack.slice();
-      stack.splice(stack.length - ntop, ntop, item);
-      return stack;
+      return parser_splice(state, 1, expr);
     }
 
 
@@ -382,9 +433,10 @@ var MathCalc = (function(module) {
 
 
   mathcalc.parse = function(content) {
-    var func = this.parser.parse(content);
+    var result = this.parser.parse(content);
     return {
-      eval: function(state) { return func(); }
+      error: result.error,
+      eval: function(state) { return result.func(); }
     };
   }
 

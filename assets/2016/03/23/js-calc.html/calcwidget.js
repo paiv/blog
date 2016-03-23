@@ -34,8 +34,17 @@
       lastLine = lastLine.replace(/^> /, '');
       if (lastLine !== undefined && lastLine.trim().length > 0) {
         var expr = this.calc.parse(lastLine);
-        var ret = expr.eval(this.state);
-        lines.push('' + ret);
+
+        if (expr.error) {
+          if (expr.error.pos >= 0)
+            lines.push(Array(3 + expr.error.pos).join(' ') + '^');
+          lines.push(expr.error.text);
+        }
+        else {
+          var ret = expr.eval(this.state);
+          lines.push('' + ret);
+        }
+
         lines.push('> ');
         this.node.value = lines.join('\n');
         this.node.scrollTop = this.node.scrollHeight;
@@ -55,7 +64,7 @@
     widget.classList.add('calcwidget', 'highlighter-rouge');
 
     var input = document.createElement('textarea');
-    input.classList.add('highlight');
+    input.classList.add('highlight', 'console');
     input.value = '> 2+2';
     widget.appendChild(input);
 
