@@ -210,6 +210,13 @@ var MathCalc = (function(module) {
             done = true;
         }
       }
+
+      if (!state.error && state.stack.length > 1) {
+        var item = getTop(state, 1);
+        var pos = item.pos || 0;
+        state.error = { pos: pos, text: 'Invalid expression' };
+      }
+
       return {
         root: state.stack.pop(),
         error: state.error
