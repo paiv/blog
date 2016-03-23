@@ -10,6 +10,7 @@ markdown: kramdown
 
 timezone: UTC
 date_format: '%Y-%m-%d %H:%M'
+future: true
 
 gems:
   - jekyll-feed

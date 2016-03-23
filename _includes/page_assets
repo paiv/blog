@@ -1,1 +1,1 @@
-{{ site.baseurl }}/assets/img{{ page.url }}
+{{ site.baseurl }}/assets{{ page.url }}
