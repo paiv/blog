@@ -4,3 +4,5 @@
       {{ page.date | default: 'now' | date: "%Y" }} {{ page.author | escape }}
     {% endif %}
 </div>
+
+{% if page.content contains 'math/tex' %}<script src="{{site.baseurl}}/mathjax/MathJax.js?config=TeX-AMS_CHTML" type="text/javascript"></script>{% endif %}
