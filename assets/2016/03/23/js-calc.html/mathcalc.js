@@ -1,6 +1,6 @@
 //
 // MathCalc: a parser for basic mathematical expressions
-// Try it here: https://paiv.github.io/blog/2016/03/23/js-calc.html
+// From here: https://paiv.github.io/blog/2016/03/23/js-calc.html
 //
 //
 // Copyright (c) 2016, Pavel Ivashkov, github.com/paiv
@@ -26,6 +26,15 @@ var MathCalc = (function(module) {
   var mathcalc = MathCalc.prototype;
 
 
+  function sliceArguments(args, start) {
+    var res = [];
+    for (var i = start, len = args.length; i < len; i++) {
+      res.push(args[i]);
+    }
+    return res;
+  }
+
+
   var Logger = (function() {
     var Logger = function(prefix, level, out) {
       this.prefix = (prefix || '') + ':';
@@ -45,10 +54,7 @@ var MathCalc = (function(module) {
 
     proto.log = function(level, text) {
       if (level >= this.level && typeof(this.out) === 'function') {
-        var args = [];
-        for (var i = 2, len = arguments.length; i < len; i++) {
-          args.push(arguments[i]);
-        }
+        var args = sliceArguments(arguments, 2);
         args = [this.prefix + text].concat(args);
         this.out.apply(this, args);
       }
@@ -72,9 +78,30 @@ var MathCalc = (function(module) {
       var func = emitter(ast.root);
       return {
         error: lex.error || ast.error,
-        func: func
+        func: func,
+        args: getArgsSpec(ast.vars),
+        eval: function() { return func(enterScope(ast.vars, arguments)); }
       };
     };
+
+    function getArgsSpec(vars) {
+      var spec = {};
+      vars.forEach(function(v,i) { spec[v] = i; });
+      return spec;
+    }
+
+    function enterScope(vars, args) {
+      var scope = {};
+      if (args.length === 1 && (typeof args[0] === 'object')) {
+        var argobj = args[0];
+        vars.forEach(function(v) { scope[v] = argobj[v]; });
+      }
+      else {
+        for (var i = 0, vlen = vars.length, alen = args.length; i < vlen && i < alen; i++)
+          scope[vars[i]] = args[i];
+      }
+      return scope;
+    }
 
     function emitter(ast) {
       if (ast !== undefined) {
@@ -98,7 +125,7 @@ var MathCalc = (function(module) {
           case 'Number':
             return function() { return ast.value; };
           case 'Var':
-            return function(x) { return x; };
+            return function(scope) { return scope[ast.value]; };
         }
       }
       return function() {};
@@ -120,7 +147,8 @@ var MathCalc = (function(module) {
       var self = undefined;
 
       function bifunc(op) {
-        return op(left.apply(this, arguments), right.apply(this, arguments)); }
+        var args = sliceArguments(arguments, 1);
+        return op(left.apply(this, args), right.apply(this, args)); }
 
       switch (op.id) {
         case 'Plus': return bifunc.bind(self, function(x,y) { return +x + y; });
@@ -172,7 +200,8 @@ var MathCalc = (function(module) {
       var state = {
         tokens: tokens,
         pos: 0,
-        stack: []
+        stack: [],
+        scope: {}
       };
 
       for (var tokenCount = 0, len = tokens.length, done = false; !done && tokenCount <= len; ) {
@@ -203,7 +232,7 @@ var MathCalc = (function(module) {
               logger.warn('%s at %d (%s)', error.text, error.pos, key);
             }
             else {
-              var error = { text: 'Unexpected EOF' };
+              var error = { text: 'Unexpected EOF', pos: state.pos + 1 };
               state.error = error;
               logger.warn('%s (%s)', error.text, key);
             }
@@ -219,6 +248,7 @@ var MathCalc = (function(module) {
 
       return {
         root: state.stack.pop(),
+        vars: Object.keys(state.scope),
         error: state.error
       };
     }
@@ -244,6 +274,7 @@ var MathCalc = (function(module) {
         tokens: state.tokens,
         pos: pos,
         stack: stack,
+        scope: state.scope,
         error: state.error
       };
     }
@@ -379,7 +410,11 @@ var MathCalc = (function(module) {
         id: 'Value',
         token: top,
       };
-      return parser_splice(state, 1, expr);
+      state = parser_splice(state, 1, expr);
+      if (top.id === 'Var') {
+        state.scope[top.value] = top;
+      }
+      return state;
     }
 
 
@@ -464,7 +499,8 @@ var MathCalc = (function(module) {
     var result = this.parser.parse(content);
     return {
       error: result.error,
-      eval: function(state) { return result.func(); }
+      eval: result.eval,
+      args: result.args
     };
   }
 
