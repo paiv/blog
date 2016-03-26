@@ -64,6 +64,28 @@ var MathCalc = (function(module) {
   })();
 
 
+  var Scope = (function () {
+    var Scope = function (obj) {
+      this.obj = obj || {};
+    };
+    var proto = Scope.prototype;
+
+    proto.get = function (name) {
+      var value = this.obj[name];
+      if (value === undefined && this.parent)
+        value = this.parent.get(name);
+      return value;
+    }
+
+    proto.set = function (name, value) {
+      this.obj[name] = value;
+      return this.get(name);
+    }
+
+    return Scope;
+  })();
+
+
   var MathExpression = (function() {
     var logger = new Logger('PARSER', Logger.NONE);
     var emitLogger = new Logger('EMIT', Logger.NONE);
@@ -75,7 +97,8 @@ var MathCalc = (function(module) {
       this.error = undefined;
       var lex = lexer(content);
       var ast = parser(lex.tokens);
-      var func = emitter(ast.root);
+      emitLogger.debug('AST: %o', ast);
+      var func = tryCatch(emitter(ast.root));
 
       return (function () {
         var scope = {};
@@ -104,15 +127,22 @@ var MathCalc = (function(module) {
         for (var i = 0, vlen = vars.length, alen = args.length; i < vlen && i < alen; i++)
           scope[vars[i]] = args[i];
       }
-      return scope;
+
+      delete scope.runtimeError;
+
+      var child = new Scope(scope);
+      child.parent = StdLib;
+      return child;
     }
 
     function emitter(ast) {
       if (ast !== undefined) {
-        emitLogger.debug('%s', ast.id);
         switch (ast.id) {
           case 'Expr':
+          case 'Tuple':
             return emitter(ast.expr);
+          case 'OpenTuple':
+            return ast.expr ? emit_tuple(ast.expr) :emit_tuple(ast.left, ast.right);
           case 'Assign':
             return ast.expr ? emitter(ast.expr) : emit_assign(ast.left, ast.right);
           case 'Sums':
@@ -121,17 +151,16 @@ var MathCalc = (function(module) {
             return ast.expr ? emitter(ast.expr) : emit_binary_op(ast.op, ast.left, ast.right);
           case 'Unary':
             return ast.expr ? emitter(ast.expr) : emit_unary_op(ast.op, ast.right);
+          case 'Call':
+            return emit_call(ast.token, ast.args);
           case 'Parens':
             return emitter(ast.expr);
           case 'Value':
             return emitter(ast.token);
-          case 'PI':
-          case 'E':
-          case 'INF':
           case 'Number':
             return function() { return ast.value; };
           case 'Var':
-            return function(scope) { return scope[ast.value]; };
+            return function(scope) { return scope.get(ast.value); };
           default:
             emitLogger.warn('No emitter for %o', ast);
         }
@@ -139,10 +168,79 @@ var MathCalc = (function(module) {
       return function() {};
     }
 
+    function tryCatch(code) {
+      return function(scope) {
+        try {
+          return code.apply(null, arguments);
+        }
+        catch (e) {
+          scope.set('runtimeError', { text: '' + e });
+        }
+      };
+    }
+
+    function emit_call(token, args) {
+      var tupleArgs = isTuple(args);
+      args = emitter(args);
+
+      return function(scope) {
+        var func = scope.get(token.value);
+
+        if (typeof func === 'function') {
+          var vals = args.apply(null, arguments);
+          if (!tupleArgs)
+            vals = [vals];
+
+          return func.apply(null, vals);
+        }
+
+        scope.set('runtimeError', { text: 'Call to undefined "' + token.value + '"'});
+      };
+    }
+
+    function isTuple(ast) {
+      if (ast !== undefined)
+      switch (ast.id) {
+        case 'Expr':
+        case 'Tuple':
+          return isTuple(ast.expr);
+        case 'OpenTuple':
+          return true;
+      }
+      return false;
+    }
+
+    function emit_tuple(left, right) {
+      if (left === undefined) {
+        return function() { return []; };
+      }
+
+      var open = left.id === 'OpenTuple';
+      left = emitter(left);
+
+      if (right === undefined) {
+        return function() {
+          return [left.apply(null, arguments)];
+        };
+      }
+
+      right = emitter(right);
+      return open ?
+        function() {
+          var t = left.apply(null, arguments);
+          t.push(right.apply(null, arguments));
+          return t;
+        }
+        :
+        function() {
+          return [left.apply(null, arguments), right.apply(null, arguments)];
+        };
+    }
+
     function emit_assign(left, right) {
       right = emitter(right);
       return function(scope) {
-        return scope[left.value] = right.apply(null, arguments);
+        return scope.set(left.value, right.apply(null, arguments));
       };
     }
 
@@ -184,24 +282,27 @@ var MathCalc = (function(module) {
     var ShiftReduce = {};
 
     // expr: assign
+    // tuple: tuple , assign | assign
     // assign: variable = assign | sum
     // sum: sum + product | product
     // product: product * pow | pow
     // pow: unary ^ pow | unary
     // unary: - unary | parens
-    // parens: ( expr ) | value
-    // value: number | constant | variable
+    // parens: variable ( tuple ) | ( expr ) | value
+    // value: number | variable
 
-    add(SHIFT, ['(empty)', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen', 'Eq'], ['Plus', 'Minus', 'LParen', 'Number', 'PI', 'E', 'INF', 'Var']);
-    add(SHIFT, ['Var'], ['Eq']);
+    add(SHIFT, ['(empty)', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen', 'Eq', 'Comma'], ['Plus', 'Minus', 'LParen', 'Number', 'Var']);
+    add(SHIFT, ['Var'], ['LParen', 'Eq']);
     add(SHIFT, ['Sums'], ['Plus', 'Minus']);
     add(SHIFT, ['Prod'], ['Mul', 'Div', 'Mod']);
     add(SHIFT, ['Unary'], ['Pow']);
-    add(SHIFT, ['Expr'], ['RParen']);
-    add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens', 'Unary', 'Power', 'Prod'], ['Plus', 'Minus']);
-    add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens', 'Unary', 'Power'], ['Mul', 'Div', 'Mod']);
-    add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens'], ['Pow']);
-    add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens', 'Unary', 'Power', 'Prod', 'Sums', 'Assign'], ['RParen', '(eof)']);
+    add(SHIFT, ['OpenTuple', 'Tuple'], ['Comma']);
+    add(SHIFT, ['LParen', 'Expr'], ['RParen']);
+    add(REDUCE, ['Number', 'Var', 'Value', 'RParen', 'Parens', 'Call', 'Unary', 'Power', 'Prod', 'Sums', 'Assign'], ['Comma']);
+    add(REDUCE, ['Number', 'Var', 'Value', 'RParen', 'Parens', 'Call', 'Unary', 'Power', 'Prod'], ['Plus', 'Minus']);
+    add(REDUCE, ['Number', 'Var', 'Value', 'RParen', 'Parens', 'Call', 'Unary', 'Power'], ['Mul', 'Div', 'Mod']);
+    add(REDUCE, ['Number', 'Var', 'Value', 'RParen', 'Parens', 'Call'], ['Pow']);
+    add(REDUCE, ['Number', 'Var', 'Value', 'RParen', 'Parens', 'Call', 'Unary', 'Power', 'Prod', 'Sums', 'Assign', 'Comma', 'OpenTuple', 'Tuple'], ['RParen', '(eof)']);
     add(DONE, ['(empty)', 'Expr'], ['(eof)']);
 
     function add(action, fro, to) {
@@ -260,7 +361,10 @@ var MathCalc = (function(module) {
       if (!state.error && state.stack.length > 1) {
         var item = getTop(state, 1);
         var pos = item.pos || 0;
-        state.error = { pos: pos, text: 'Invalid expression' };
+        var paren = item.id === 'LParen';
+        var error = { pos: pos, text: paren ? 'Open paren' : 'Invalid expression' };
+        state.error = error;
+        logger.warn('%s at %d (eof)', error.text, error.pos);
       }
 
       return {
@@ -299,23 +403,26 @@ var MathCalc = (function(module) {
     function parser_reduce(state, token) {
       var top = getTop(state, 0);
       switch (top.id) {
+        case 'Tuple':
+          return parser_reduce_expr(state);
+        case 'OpenTuple':
+        case 'Comma':
+          return parser_reduce_tuple(state, token);
         case 'Assign':
         case 'Sums':
-          return parser_reduce_assign(state);
+          return parser_reduce_assign(state, token);
         case 'Prod':
           return parser_reduce_sums(state);
         case 'Power':
         case 'Unary':
           return parser_reduce_power(state);
+        case 'Call':
         case 'Parens':
           return parser_reduce_unary_op(state);
         case 'Value':
         case 'RParen':
           return parser_reduce_parens(state);
         case 'Number':
-        case 'PI':
-        case 'E':
-        case 'INF':
         case 'Var':
           return parser_reduce_value(state);
       }
@@ -336,12 +443,45 @@ var MathCalc = (function(module) {
       return parser_splice(state, 1, expr);
     }
 
-    function parser_reduce_assign(state) {
+    function parser_reduce_tuple(state, token) {
+      var left = getTop(state, 2);
       var oper = getTop(state, 1);
+      var right = getTop(state, 0);
+      var expr = { id: 'OpenTuple' };
+
+      if (right.id === 'Comma') {
+        return parser_splice(state, 2, oper);
+      }
+
+      if (oper !== undefined && oper.id === 'Comma') {
+        expr.op = oper;
+        expr.left = left;
+        expr.right = right;
+        return parser_splice(state, 3, expr);
+      }
+
+      var open = token !== undefined && token.id === 'Comma';
+      if (open) {
+        expr.expr = right;
+        return parser_splice(state, 1, expr);
+      }
+
+      expr = { id: 'Tuple', expr: right };
+      return parser_splice(state, 1, expr);
+    }
+
+    function parser_reduce_assign(state, token) {
+      var oper = getTop(state, 1);
+      var right = getTop(state, 0);
+
+      if (right !== undefined && right.id === 'Sums') {
+        return parser_reduce_binary_op(state, ['Eq'], 'Assign');
+      }
       if (oper !== undefined && oper.id === 'Eq') {
         return parser_reduce_binary_op(state, ['Eq'], 'Assign');
       }
-      return parser_reduce_expr(state);
+
+      return parser_reduce_tuple(state, token);
     }
 
     function parser_reduce_sums(state) {
@@ -388,7 +528,7 @@ var MathCalc = (function(module) {
       return parser_reduce_product(state);
     }
 
-    var UNARY_LEFT_TERMS = ['Pow', 'Mul', 'Div', 'Mod', 'Plus', 'Minus', 'LParen'];
+    var UNARY_LEFT_TERMS = ['Pow', 'Mul', 'Div', 'Mod', 'Plus', 'Minus', 'Eq', 'Comma', 'LParen'];
 
     function parser_reduce_unary_op(state, optional) {
       var left = getTop(state, 2);
@@ -410,18 +550,36 @@ var MathCalc = (function(module) {
     }
 
     function parser_reduce_parens(state) {
+      var leftleft = getTop(state, 3);
       var left = getTop(state, 2);
       var middle = getTop(state, 1);
       var right = getTop(state, 0);
       var expr = { id: 'Parens' };
 
       if (right.id === 'RParen') {
+
+        if (middle !== undefined && middle.id === 'LParen') {
+          if (left !== undefined && left.id === 'Var') {
+            expr = { id: 'Call', token: left };
+            return parser_splice(state, 3, expr);
+          }
+
+          expr = { id: 'OpenTuple' };
+          return parser_splice(state, 2, expr);
+        }
+
         if (left === undefined || left.id !== 'LParen') {
           var error = { pos: right.pos, text: 'Unmatched paren' };
           state.error = error;
           logger.warn('%s at %d', error.text, error.pos);
           return parser_splice(state, 1);
         }
+
+        if (leftleft !== undefined && leftleft.id === 'Var') {
+          expr = { id: 'Call', token: leftleft, args: middle };
+          return parser_splice(state, 4, expr);
+        }
+
         expr.expr = middle;
         return parser_splice(state, 3, expr);
       }
@@ -463,8 +621,8 @@ var MathCalc = (function(module) {
       };
     }
 
-    var Tokens = /^(?:(\s+)|((?:\d+e[-+]?\d+|\d+(?:\.\d*)?|\d*\.\d+))|(\+)|(\-)|(\*)|(\/)|(%)|(\^)|(\()|(\))|(=)|(pi)\b|(e)\b|(inf)\b|([a-zA-Z]\w*))/i;
-    var TokenIds = ['Space', 'Number', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen', 'RParen', 'Eq', 'PI', 'E', 'INF', 'Var'];
+    var Tokens = /^(?:(\s+)|((?:\d+e[-+]?\d+|\d+(?:\.\d*)?|\d*\.\d+))|(\+)|(\-)|(\*)|(\/)|(%)|(\^)|(\()|(\))|(=)|(,)|([a-zA-Z]\w*))/i;
+    var TokenIds = ['Space', 'Number', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen', 'RParen', 'Eq', 'Comma', 'Var'];
 
     function tokenizer(content, pos) {
       var s = content.slice(pos);
@@ -510,9 +668,6 @@ var MathCalc = (function(module) {
     function evalToken(id, s) {
       switch (id) {
         case 'Number': return parseNumber(s);
-        case 'PI': return Math.PI;
-        case 'E': return Math.E;
-        case 'INF': return Number.POSITIVE_INFINITY;
         default: return s;
       }
     }
@@ -520,6 +675,23 @@ var MathCalc = (function(module) {
     return MathExpression;
   })();
 
+
+  function loadStandardLibrary() {
+    var scope = new Scope();
+    scope.set('pi', Math.PI);
+    scope.set('e', Math.E);
+    scope.set('inf', Number.POSITIVE_INFINITY);
+
+    copyFrom(Math, Object.getOwnPropertyNames(Math));
+
+    function copyFrom(obj, names) {
+      names.forEach(function(n){ scope.set(n, obj[n]); });
+    }
+
+    return scope;
+  }
+
+  var StdLib = loadStandardLibrary();
 
   mathcalc.parse = function(content) {
     return this.parser.parse(content);

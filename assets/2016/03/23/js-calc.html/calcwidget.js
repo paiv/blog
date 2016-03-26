@@ -32,24 +32,38 @@
       var lines = this.node.value.split(/\n/);
       var lastLine = lines[lines.length - 1];
       lastLine = lastLine.replace(/^> /, '');
+
+      function logError(err) {
+        if (err.pos >= 0)
+          lines.push(Array(3 + err.pos).join(' ') + '^');
+        lines.push(err.text);
+      }
+
       if (lastLine !== undefined && lastLine.trim().length > 0) {
         var expr = this.calc.parse(lastLine);
         expr.scope = this.state;
 
         if (expr.error) {
-          if (expr.error.pos >= 0)
-            lines.push(Array(3 + expr.error.pos).join(' ') + '^');
-          lines.push(expr.error.text);
+          logError(expr.error);
         }
         else {
           var ret = expr.eval();
-          lines.push('' + ret);
+          if (expr.scope.runtimeError)
+            logError(expr.scope.runtimeError);
+          else
+            lines.push(formatValue(ret));
         }
 
         lines.push('> ');
         this.node.value = lines.join('\n');
         this.node.scrollTop = this.node.scrollHeight;
       }
+    }
+
+    function formatValue(v) {
+      return Array.isArray(v) ? JSON.stringify(v)
+        : (typeof v === 'function') ? 'function ' + v.name + '()'
+        : '' + v;
     }
 
     proto.clear = function() {
