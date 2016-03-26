@@ -76,12 +76,17 @@ var MathCalc = (function(module) {
       var lex = lexer(content);
       var ast = parser(lex.tokens);
       var func = emitter(ast.root);
-      return {
-        error: lex.error || ast.error,
-        func: func,
-        args: getArgsSpec(ast.vars),
-        eval: function() { return func(enterScope(ast.vars, arguments)); }
-      };
+
+      return (function () {
+        var scope = {};
+        return {
+          error: lex.error || ast.error,
+          args: getArgsSpec(ast.vars),
+          eval: function() { return func(enterScope(scope, ast.vars, arguments)); },
+          set scope(obj) { scope = obj || {}; },
+          get scope() { return scope; }
+        };
+      })();
     };
 
     function getArgsSpec(vars) {
@@ -90,8 +95,7 @@ var MathCalc = (function(module) {
       return spec;
     }
 
-    function enterScope(vars, args) {
-      var scope = {};
+    function enterScope(scope, vars, args) {
       if (args.length === 1 && (typeof args[0] === 'object')) {
         var argobj = args[0];
         vars.forEach(function(v) { scope[v] = argobj[v]; });
@@ -109,6 +113,8 @@ var MathCalc = (function(module) {
         switch (ast.id) {
           case 'Expr':
             return emitter(ast.expr);
+          case 'Assign':
+            return ast.expr ? emitter(ast.expr) : emit_assign(ast.left, ast.right);
           case 'Sums':
           case 'Prod':
           case 'Power':
@@ -126,9 +132,18 @@ var MathCalc = (function(module) {
             return function() { return ast.value; };
           case 'Var':
             return function(scope) { return scope[ast.value]; };
+          default:
+            emitLogger.warn('No emitter for %o', ast);
         }
       }
       return function() {};
+    }
+
+    function emit_assign(left, right) {
+      right = emitter(right);
+      return function(scope) {
+        return scope[left.value] = right.apply(null, arguments);
+      };
     }
 
     function emit_unary_op(op, right) {
@@ -168,7 +183,8 @@ var MathCalc = (function(module) {
 
     var ShiftReduce = {};
 
-    // expr: sum
+    // expr: assign
+    // assign: variable = assign | sum
     // sum: sum + product | product
     // product: product * pow | pow
     // pow: unary ^ pow | unary
@@ -176,7 +192,8 @@ var MathCalc = (function(module) {
     // parens: ( expr ) | value
     // value: number | constant | variable
 
-    add(SHIFT, ['(empty)', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen'], ['Plus', 'Minus', 'LParen', 'Number', 'PI', 'E', 'INF', 'Var']);
+    add(SHIFT, ['(empty)', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen', 'Eq'], ['Plus', 'Minus', 'LParen', 'Number', 'PI', 'E', 'INF', 'Var']);
+    add(SHIFT, ['Var'], ['Eq']);
     add(SHIFT, ['Sums'], ['Plus', 'Minus']);
     add(SHIFT, ['Prod'], ['Mul', 'Div', 'Mod']);
     add(SHIFT, ['Unary'], ['Pow']);
@@ -184,7 +201,7 @@ var MathCalc = (function(module) {
     add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens', 'Unary', 'Power', 'Prod'], ['Plus', 'Minus']);
     add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens', 'Unary', 'Power'], ['Mul', 'Div', 'Mod']);
     add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens'], ['Pow']);
-    add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens', 'Unary', 'Power', 'Prod', 'Sums'], ['RParen', '(eof)']);
+    add(REDUCE, ['Number', 'PI', 'E', 'INF', 'Var', 'Value', 'RParen', 'Parens', 'Unary', 'Power', 'Prod', 'Sums', 'Assign'], ['RParen', '(eof)']);
     add(DONE, ['(empty)', 'Expr'], ['(eof)']);
 
     function add(action, fro, to) {
@@ -282,8 +299,9 @@ var MathCalc = (function(module) {
     function parser_reduce(state, token) {
       var top = getTop(state, 0);
       switch (top.id) {
+        case 'Assign':
         case 'Sums':
-          return parser_reduce_expr(state);
+          return parser_reduce_assign(state);
         case 'Prod':
           return parser_reduce_sums(state);
         case 'Power':
@@ -316,6 +334,14 @@ var MathCalc = (function(module) {
         expr: top,
       };
       return parser_splice(state, 1, expr);
+    }
+
+    function parser_reduce_assign(state) {
+      var oper = getTop(state, 1);
+      if (oper !== undefined && oper.id === 'Eq') {
+        return parser_reduce_binary_op(state, ['Eq'], 'Assign');
+      }
+      return parser_reduce_expr(state);
     }
 
     function parser_reduce_sums(state) {
@@ -437,8 +463,8 @@ var MathCalc = (function(module) {
       };
     }
 
-    var Tokens = /^(?:(\s+)|((?:\d+e[-+]?\d+|\d+(?:\.\d*)?|\d*\.\d+))|(\+)|(\-)|(\*)|(\/)|(%)|(\^)|(\()|(\))|(pi)\b|(e)\b|(inf)\b|([a-zA-Z]\w*))/i;
-    var TokenIds = ['Space', 'Number', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen', 'RParen', 'PI', 'E', 'INF', 'Var'];
+    var Tokens = /^(?:(\s+)|((?:\d+e[-+]?\d+|\d+(?:\.\d*)?|\d*\.\d+))|(\+)|(\-)|(\*)|(\/)|(%)|(\^)|(\()|(\))|(=)|(pi)\b|(e)\b|(inf)\b|([a-zA-Z]\w*))/i;
+    var TokenIds = ['Space', 'Number', 'Plus', 'Minus', 'Mul', 'Div', 'Mod', 'Pow', 'LParen', 'RParen', 'Eq', 'PI', 'E', 'INF', 'Var'];
 
     function tokenizer(content, pos) {
       var s = content.slice(pos);
@@ -496,12 +522,7 @@ var MathCalc = (function(module) {
 
 
   mathcalc.parse = function(content) {
-    var result = this.parser.parse(content);
-    return {
-      error: result.error,
-      eval: result.eval,
-      args: result.args
-    };
+    return this.parser.parse(content);
   }
 
   return MathCalc;

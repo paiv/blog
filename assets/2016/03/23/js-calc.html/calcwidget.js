@@ -34,6 +34,7 @@
       lastLine = lastLine.replace(/^> /, '');
       if (lastLine !== undefined && lastLine.trim().length > 0) {
         var expr = this.calc.parse(lastLine);
+        expr.scope = this.state;
 
         if (expr.error) {
           if (expr.error.pos >= 0)
@@ -41,7 +42,7 @@
           lines.push(expr.error.text);
         }
         else {
-          var ret = expr.eval(this.state);
+          var ret = expr.eval();
           lines.push('' + ret);
         }
 
@@ -68,7 +69,7 @@
     input.setAttribute('autocomplete', 'off');
     input.setAttribute('autocorrect', 'off');
     input.setAttribute('autocapitalize', 'off');
-    
+
     input.value = '> 2+2';
     widget.appendChild(input);
 
