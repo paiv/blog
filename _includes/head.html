@@ -4,5 +4,6 @@
   {% if page.excerpt %}<meta name="description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}">{% endif %}
   {% feed_meta %}
   <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
+  <link rel="shortcut icon" href="{{ site.baseurl }}/assets/img/favicon.png" media="screen" title="no title" charset="utf-8">
   <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/main.css">
 </head>
