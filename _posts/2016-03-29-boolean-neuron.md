@@ -1,7 +1,7 @@
 ---
 title: "Boolean Neuron"
 tags: [machine learning, ml, neural networks, neuron]
-date: "2016-03-29 18:10"
+date: "2016-03-29 18:10:02"
 thumbnail: true
 ---
 
