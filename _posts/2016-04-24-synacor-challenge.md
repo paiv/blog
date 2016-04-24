@@ -16,7 +16,7 @@ The challenge starts with you writing a virtual machine, and has a number of ste
 
 # SPOILER ALERT
 
-At this point, if you are interested in completing the challenge for yourself, stop reading, and have fun coding.
+At this point, if you are interested in completing the challenge yourself, stop reading, and have fun coding.
 
 
 # My notes and code
@@ -27,7 +27,7 @@ At this point, if you are interested in completing the challenge for yourself, s
 Virtual Machine
 ---------------
 
-The only thing you are given is a binary image and a spec to virtual machine to run it, so I started coding VM, wondering what kind of game is would be.
+The only thing you are given is a binary image and a spec to virtual machine to run it, so I started coding VM, wondering what kind of game it would be.
 
 The VM spec is straightforward, pay attention to modulo arithmetics. The image runs self-testing routines at boot, so use that as a lazy TDD.
 
@@ -50,7 +50,7 @@ After initial attempts to map rooms on paper, I start poking inside the image. F
 
 But the image is encrypted, and runs self-decryption at the start. So I dump memory from a running game, and disassemble that.
 
-At this point I decide I need a proper save and restore from save, and some debugger mechanisms, so I start coding a shell over virtual machine.
+At this point I think of a proper save and restore from save, and some debugger mechanisms, so I start coding a shell over virtual machine.
 
 ```sh
 ./synacor challenge.bin
@@ -105,13 +105,13 @@ I implement the function, with added twist for third parameter, and brute-force 
 
 Well, lesson learned. Get the true meaning of the function. Analyze actual data.
 
-With teleporting solved, I jump to the beach and walk to the vault lock.
+With teleporting solved, I jump on the beach and walk to vault lock.
 
 
 Vault Lock
 ----------
 
-The journal gives general description of the task, and I have all the tools at hand.
+Journal gives general description of the task, and I have all the tools at hand.
 
 I extract data for the vault lock, with room operation and connections. Then I run a tree search to find the shortest solution, no tricks here.
 
