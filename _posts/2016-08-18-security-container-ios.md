@@ -10,7 +10,7 @@ Login screen UI pattern, and introduction to container view controllers.
 
 # When is Login shown
 
-Let's review when we show a Login screen:
+Let's review when do we show a Login screen:
 
 * first, when app is started for the first time, to obtain authentication token
 * second, when authentication token expired
