@@ -1,7 +1,7 @@
 ---
 title: "Convolutional Networks: from TensorFlow to iOS BNNS"
 tags: [ios, swift, bnns, "neural network", tensorflow, numpy, convolution, deep, convnet, "machine learning"]
-date: "2016-09-25 00:00"
+date: "2016-09-25 00:01"
 thumbnail: true
 ---
 
@@ -201,6 +201,8 @@ What do you think?
 
 
 # The End
+
+Source code: https://github.com/paiv/mnist-bnns
 
 
 [BNNS-REF]: https://developer.apple.com/reference/accelerate/1912851-bnns
