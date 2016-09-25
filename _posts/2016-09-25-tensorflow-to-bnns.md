@@ -202,7 +202,7 @@ What do you think?
 
 # The End
 
-Source code: https://github.com/paiv/mnist-bnns
+Source code: [paiv/mnist-bnns][SOURCE]
 
 
 [BNNS-REF]: https://developer.apple.com/reference/accelerate/1912851-bnns
@@ -216,3 +216,4 @@ Source code: https://github.com/paiv/mnist-bnns
 [mnist-nn.ipynb]: https://github.com/paiv/mnist-bnns/tree/master/data/mnist-nn.ipynb
 [mnist-predict-from-model.ipynb]: https://github.com/paiv/mnist-bnns/tree/master/data/mnist-predict-from-model.ipynb
 [BnnsBuilder.swift]: https://github.com/paiv/mnist-bnns/tree/master/mnistios/BnnsBuilder/BnnsBuilder.swift
+[SOURCE]: https://github.com/paiv/mnist-bnns
