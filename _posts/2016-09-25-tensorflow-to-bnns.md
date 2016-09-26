@@ -1,7 +1,7 @@
 ---
 title: "Convolutional Networks: from TensorFlow to iOS BNNS"
 tags: [ios, swift, bnns, "neural network", tensorflow, numpy, convolution, deep, convnet, "machine learning"]
-date: "2016-09-25 00:01"
+date: "2016-09-25 00:02"
 thumbnail: true
 ---
 
@@ -166,7 +166,7 @@ I have another script for you that loads model files back into TensorFlow: [mnis
 
 Courage! Finally, we have neural network in BNNS, the model is ready, and we are ready to pack everything in a beautiful app. Which I did for you here:
 
-<img src="{% include page_assets %}/final-screen.png" width="320" />
+<a href="{% include page_assets %}/final-screen.png"><img src="{% include page_assets %}/final-screen.png" width="200" /></a>
 
 The app loads *test* data from MNIST (not the *train* data we trained our model on) – there are 10,000 images to recognize.
 
@@ -175,9 +175,15 @@ There are two modes of operation: pick images to recognize one by one, or recogn
 Again, I hide BNNS boilerplate under simple `BnnsNetwork` facade – running the network is as simple as
 
 ```swift
-let outputs = network.apply(input: read(image: image))
-outputs.index(of: outputs.max()!)!
+let outputs = nn.apply(input: imageData)
+return outputs.index(of: outputs.max()!)!
 ```
+
+Update: now you can conjure digits:
+
+<a href="{% include page_assets %}/draw-screen.png"><img src="{% include page_assets %}/draw-screen.png" width="200" /></a>
+
+For proper recognition, I'm recreating MNIST preprocessing "by computing the center of mass of the pixels, and translating the image so as to position this point at the center of the 28x28 field".
 
 
 # Treasure!
