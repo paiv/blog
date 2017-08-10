@@ -1,7 +1,7 @@
 ---
 title: "ICFP Contest 2017: Team paiv"
 tags: [icfpcontest, icfpc, programming, contest]
-date: "2017-08-09 00:00"
+date: "2017-08-09 00:02"
 thumbnail: true
 ---
 
@@ -9,7 +9,7 @@ Graph *punting* competition.
 
 Contest site: [https://icfpcontest2017.github.io/][ICFPSITE]
 
-# Team
+# Team results
 
 The team: me only
 
@@ -58,7 +58,9 @@ Day three started with adopting splurges extension. Then I had score tracked thr
 After a sleep brake (timezones), added support for options extension. Then a rush final stretch for monte-carlo-esque player, with final half-hour bug chase. (Have used 15 minutes into added time, thank you orgs).
 
 
-# Aftermath
+# Post-event
+
+## Visualizer
 
 After competition was over, I finally had time for visualizer.
 
@@ -71,7 +73,29 @@ imbotnot> I can do magic
 [<img src="{% include page_assets %}/boston-cut.png" style="width:40pt">]({% include page_assets %}/boston.gif)
 
 
-Notes to self:
+## Server
+
+...and then I decided to build a server too.
+
+Server runs on Node.js:
+
+```
+usage: puntd.js [-h] [-b HOST] [-p PORT] [-m MAP] [-n PLAYERS] [-f] [-o] [-s]
+                [-th HANDSHAKE] [-ts SETUP] [-tm MOVE]
+```
+
+I strived to make it full-featured, close to spec:
+
+- [x] futures
+- [x] splurges
+- [x] options
+- [x] timeouts
+- [x] zombies
+
+It still lacks testing though.
+
+
+## Notes to self
 
 * visualizer better be early
 * prototyping is good, but there is no time to switch languages
@@ -84,8 +108,6 @@ Notes to self:
 I made a list of teams I can find on the internets here:
 
 * [teams][TEAMS]
-
-If you know more, or want to be added, [create a ticket][ADDSOME].
 
 
 # Codes
