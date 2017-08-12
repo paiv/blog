@@ -1,7 +1,7 @@
 ---
 title: "ICFP Contest 2017: Team paiv"
 tags: [icfpcontest, icfpc, programming, contest]
-date: "2017-08-09 00:02"
+date: "2017-08-09 00:04"
 thumbnail: true
 ---
 
@@ -23,7 +23,7 @@ Ranks:
 
 # Task
 
-The task was a kind of multi-player board game with partially hidden state.
+The task was kind of a multi-player board game with partially hidden state.
 On your turn, you claim edges of a graph, trying to make longer *roads* from
 a few specific nodes, and preventing opponents from doing so.
 
@@ -95,6 +95,17 @@ I strived to make it full-featured, close to spec:
 It still lacks testing though.
 
 
+## Server Docker
+
+A ready to run server is now stored on Docker Hub. You can easily run it locally with
+
+```sh
+docker run --rm -P paiv/puntd
+```
+
+See [README][SERVER] for detailed parameters.
+
+
 ## Notes to self
 
 * visualizer better be early
@@ -116,6 +127,7 @@ I made a list of teams I can find on the internets here:
 
 
 [CODES]: https://github.com/paiv/icfpc2017
+[SERVER]: https://github.com/paiv/icfpc2017/tree/master/server
 [ICFPSITE]: https://icfpcontest2017.github.io/
 [PROBLEM]: https://icfpcontest2017.github.io/problem/
 [MAPVIEWER]: http://punter.inf.ed.ac.uk/graph-viewer/?map=/maps/lambda.json
