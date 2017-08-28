@@ -1,7 +1,7 @@
 ---
 title: "ICFP Contest 2017: Team paiv"
 tags: [icfpcontest, icfpc, programming, contest]
-date: "2017-08-09 00:04"
+date: "2017-08-09 00:06"
 thumbnail: true
 ---
 
@@ -16,9 +16,22 @@ The team: me only
 * [code][CODES]
 
 
-Ranks:
+#### Lightning
 
-*to be posted*
+Eliminated in round I (38/52)
+
+<img src="{% include page_assets %}/ranks-lightning.png" width="200">
+
+#### Full
+
+Unfortunately submission had a bug introduced in last hour of coding, and
+was crashing for orgs.
+
+```
+[20:45] <@dhil> Segmentation fault
+[21:32] <paiv> dhil: found my bug. That code can play only with options enabled.
+Rush hour mess, blame me
+```
 
 
 # Task
@@ -29,7 +42,7 @@ a few specific nodes, and preventing opponents from doing so.
 
 Sample map:
 
-<img src="{% include page_assets %}/sample.gif" style="width:100px">
+<img src="{% include page_assets %}/sample.gif" width="100">
 
 Additional rules make it more fun:
 
