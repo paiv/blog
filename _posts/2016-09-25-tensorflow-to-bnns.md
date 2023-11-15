@@ -34,7 +34,7 @@ Convolutional network is a good fit for this task.
 
 (image credit: [The Asimov Institute][NN-ZOO])
 
-We are going to use [TensorFlow tutorial][TF-TUT] to train a pretty confident model! You can install TensorFlow [with Anaconda][BLOG-ANACONDA], if you don't have one.
+We are going to use [TensorFlow tutorial][TF-TUT] to train a pretty confident model!
 
 I've included pre-trained model in the repository for you, but here is the full TensorFlow script from the tutorial to generate the model: [mnist-nn.ipynb] (might take a couple of hours to train).
 
@@ -215,7 +215,6 @@ Source code: [paiv/mnist-bnns][SOURCE]
 [BNNS-WWDC]: https://developer.apple.com/videos/play/wwdc2016/715/
 [MNIST]: http://yann.lecun.com/exdb/mnist/
 [TF-TUT]: https://www.tensorflow.org/versions/r0.10/tutorials/mnist/pros/index.html
-[BLOG-ANACONDA]: https://paiv.github.io/blog/2016/02/29/anaconda.html
 [NN-ZOO]: http://www.asimovinstitute.org/neural-network-zoo/
 [TWIT-BUG]: https://twitter.com/dribnet/status/696240671498240002
 [numpy.ravel]: http://docs.scipy.org/doc/numpy/reference/generated/numpy.ravel.html
