@@ -2,12 +2,12 @@ img.tt { border-bottom: 1px solid lightgrey; }
 .neuron-widget { display:flex; justify-content:center; }
 
 /*http://paletton.com/#uid=33B0u0kw0w0jyC+oRxVy4oIDfjr*/
-svg { background-color: white; width: 100%; height: 100%; max-width:40em; }
-svg .node { stroke: #0D56A6; stroke-width: 1.618; fill: white; }
-svg .tnode { stroke-width: 1; }
-svg .true { fill: #FF9A63; }
-svg .truec { fill: #FBE2D4; }
-svg .link { stroke: black; stroke-width: 1.618; }
-svg .slider-rect { stroke: #063365; stroke-width: 1px; fill: white; }
-svg .slider-bar { fill: #FFD339; }
-svg text { font-family: sans-serif; }
+.neuron-widget svg { background-color: white; width: 100%; height: 100%; max-width:40em; }
+.neuron-widget svg .node { stroke: #0D56A6; stroke-width: 1.618; fill: white; }
+.neuron-widget svg .tnode { stroke-width: 1; }
+.neuron-widget svg .true { fill: #FF9A63; }
+.neuron-widget svg .truec { fill: #FBE2D4; }
+.neuron-widget svg .link { stroke: black; stroke-width: 1.618; }
+.neuron-widget svg .slider-rect { stroke: #063365; stroke-width: 1px; fill: white; }
+.neuron-widget svg .slider-bar { fill: #FFD339; }
+.neuron-widget svg text { font-family: sans-serif; }
