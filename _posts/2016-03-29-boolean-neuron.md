@@ -1,9 +1,10 @@
 ---
 title: "Boolean Neuron"
-tags: [machine learning, ml, neural networks, neuron, latex]
+tags: [machine learning, ml, neural networks, neuron]
 date: "2016-03-29 18:10:02"
 thumbnail: true
 ---
+{% include mathjax.html %}
 
 A playground of Boolean operations learned by a single neuron.
 

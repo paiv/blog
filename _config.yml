@@ -30,7 +30,7 @@ defaults:
     scope:
       type: posts
     values:
-      layout: blogpost
+      layout: post
 
 exclude:
   - README.md
