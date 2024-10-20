@@ -1,5 +1,5 @@
 title: paiv
-description: pavel ivashkov dev blog
+description: pavlo ivashkov dev blog
 baseurl: /blog
 url: https://paiv.github.io
 
@@ -13,20 +13,24 @@ timezone: UTC
 date_format: '%Y-%m-%d %H:%M'
 future: true
 
-gems:
+plugins:
   - jekyll-feed
   - jekyll-sitemap
+
+remote_theme: minima
+minima:
+  skin: auto
 
 defaults:
   -
     values:
       show_index: true
-      author: Pavel Ivashkov
+      author: Pavlo Ivashkov
   -
     scope:
       type: posts
     values:
-      layout: post
+      layout: blogpost
 
 exclude:
   - README.md

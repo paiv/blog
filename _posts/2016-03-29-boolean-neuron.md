@@ -1,6 +1,6 @@
 ---
 title: "Boolean Neuron"
-tags: [machine learning, ml, neural networks, neuron]
+tags: [machine learning, ml, neural networks, neuron, latex]
 date: "2016-03-29 18:10:02"
 thumbnail: true
 ---
@@ -29,9 +29,7 @@ Where `S` is a [sigmoid function][SIGMOID]:
 This simple neuron can learn basic Boolean operations:
 
 | <img src="{% include page_assets %}/tt-and.png" width="45" class="tt" /> | AND |
-
 | <img src="{% include page_assets %}/tt-or.png" width="45" class="tt" /> | OR |
-
 | <img src="{% include page_assets %}/tt-not.png" width="45" class="tt" /> | NOT (on first input) |
 
 

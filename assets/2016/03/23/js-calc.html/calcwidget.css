@@ -3,6 +3,7 @@
 }
 
 .calcwidget textarea {
+  color: inherit;
   width: 24em;
   max-width: 100%;
   height: 8.5em;
