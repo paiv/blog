@@ -11,6 +11,13 @@ img.avatar {
   float: left;
   margin-right: 1em;
 }
+ul.h {
+  list-style: none;
+}
+ul.h li:before {
+  content: "❤️   ";
+  font-size: xx-small;
+}
 </style>
 
 <p>
@@ -37,4 +44,10 @@ img.avatar {
   <li>twitter:
     <a href="https://twitter.com/{{ site.twitter_username }}">{{ site.twitter_username | escape }}</a>
   </li>
+</ul>
+
+<div>Support my projects by donating via</div>
+<ul class="h">
+  <li><a href="https://www.paypal.com/donate/?hosted_button_id=4BQ2Y97YUMM7L" target="_blank">PayPal</a></li>
+  <li><a href="https://www.patreon.com/paiv" target="_blank">Patreon</a></li>
 </ul>
