@@ -92,6 +92,9 @@ Reference card ([IPA][IPAU]):
 If you are writing software that includes Cyrillic transliteration,
 I have [helper libraries here][PVLIB].
 
+And if you need a quick online transliteration from Cyrillic,
+[here is the page][PVTR].
+
 
 [WROU]: https://en.wikipedia.org/wiki/Romanization_of_Ukrainian
 [WUKL]: https://uk.wikipedia.org/wiki/Українська_латинка
@@ -100,5 +103,6 @@ I have [helper libraries here][PVLIB].
 [IPAU]: https://en.wikipedia.org/wiki/Help:IPA/Ukrainian
 [PVKAT]: https://paiv.github.io/ukraine-toponyms/
 [PVEXT]: https://paiv.github.io/latynka/en/
+[PVTR]: https://paiv.github.io/latynka/en/convert.html
 [PVKBD]: https://paiv.github.io/latynka-keyboard/
 [PVLIB]: https://paiv.github.io/uklatn/
