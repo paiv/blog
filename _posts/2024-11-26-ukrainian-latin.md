@@ -27,7 +27,7 @@ You can compare different historical systems with this browser extension I made:
 [Ukraïnsjka Latynka][PVEXT].
 
 [KMU 55:2010][KMU55] is the system currently used and adopted internationally.
-It is a lossy tranlisteration of Cyrillic:
+It is a lossy transliteration of Cyrillic:
 
     Khvatskyi yushkovar Filip shchodnia na ganku
     hotuie simi vecheriu z zhab.
