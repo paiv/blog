@@ -72,6 +72,7 @@ on a generic keyboard layout. For System A you will need a custom keyboard layou
 I have [some layouts here][PVKBD].
 
 Reference card ([IPA][IPAU]):
+
     ◌j, consonant+j forms a digraph, palatalizing the consonant:
       nja /nʲa/, cje /t͡sʲɛ/, sjk /sʲk/
     j in other positions: j /j/ m'ja /mjɑ/, p'je /pjɛ/, juk /juk/
