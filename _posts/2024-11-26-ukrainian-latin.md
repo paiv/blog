@@ -71,6 +71,23 @@ enough for written text, compared to the alternatives. System B you can type
 on a generic keyboard layout. For System A you will need a custom keyboard layout,
 I have [some layouts here][PVKBD].
 
+Reference card ([IPA][IPAU]):
+    ◌j, consonant+j forms a digraph, palatalizing the consonant:
+      nja /nʲa/, cje /t͡sʲɛ/, sjk /sʲk/
+    j in other positions: j /j/ m'ja /mjɑ/, p'je /pjɛ/, juk /juk/
+    u /u/
+    y /ɪ/
+    ï, ji /ji/
+    c /t͡s/
+    č, ch /t͡ʃ/
+    ğ, gh /ɦ/
+    š, sh /ʃ/
+    ŝ, shch /ʃt͡ʃ/
+    x, kh /x/
+    ž, zh /ʒ/
+    other letters are generally intuitive:
+      a b d e f g i k l m n o p r s t v z
+
 If you are writing software that includes Cyrillic transliteration,
 I have [helper libraries here][PVLIB].
 
@@ -79,6 +96,7 @@ I have [helper libraries here][PVLIB].
 [WUKL]: https://uk.wikipedia.org/wiki/Українська_латинка
 [DSTU9112]: https://uk.wikipedia.org/wiki/ДСТУ_9112:2021
 [KMU55]: https://zakon.rada.gov.ua/laws/show/55-2010-п
+[IPAU]: https://en.wikipedia.org/wiki/Help:IPA/Ukrainian
 [PVKAT]: https://paiv.github.io/ukraine-toponyms/
 [PVEXT]: https://paiv.github.io/latynka/en/
 [PVKBD]: https://paiv.github.io/latynka-keyboard/
