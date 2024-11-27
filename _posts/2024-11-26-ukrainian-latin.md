@@ -66,7 +66,7 @@ At the same time, the need to write Ukrainian language in Latin script
 has always been present. Ukraine's recent national standard meets this need
 with a nice system.
 
-If you want to practice Ukrainian Latin, I propose adopting DSTU 9112. It is good
+If you want to practice Ukrainian Latin, I suggest adopting DSTU 9112. It is good
 enough for written text, compared to the alternatives. System B you can type
 on a generic keyboard layout. For System A you will need a custom keyboard layout,
 I have [some layouts here][PVKBD].
