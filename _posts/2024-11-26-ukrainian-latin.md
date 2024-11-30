@@ -1,7 +1,7 @@
 ---
 title: "The state of Ukrainian Latin"
 tags: [ukraine, transliteration, romanization]
-date: "2024-11-26 00:00"
+date: "2024-11-26 00:01"
 thumbnail: true
 ---
 
@@ -59,6 +59,8 @@ Here is a comparison of city names written in new and the legacy system
 | Глухів | Ğluxiv | Ghlukhiv | Hlukhiv |
 | Київ | Kyïv | Kyjiv | Kyiv |
 | Ржищів | Ržyŝiv | Rzhyshchiv | Rzhyshchiv |
+
+As a national standard, DSTU 9112 is expected to replace legacy systems over time.
 
 The movement for the complete replacement of Cyrillic with the Latin alphabet
 is practically non-existent these days. It is too radical, without major benefits.
