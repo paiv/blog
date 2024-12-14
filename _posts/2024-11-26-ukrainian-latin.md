@@ -71,7 +71,7 @@ with a nice system.
 If you want to practice Ukrainian Latin, I suggest adopting DSTU 9112. It is good
 enough for written text, compared to the alternatives. System B you can type
 on a generic keyboard layout. For System A you will need a custom keyboard layout,
-I have [some layouts here][PVKBD].
+some examples here: [keyboard layouts for Ukrainian Latin][PVKBD].
 
 Reference card ([IPA][IPAU]):
 
@@ -92,10 +92,10 @@ Reference card ([IPA][IPAU]):
       a b d e f g i k l m n o p r s t v z
 
 If you are writing software that includes Cyrillic transliteration,
-I have [helper libraries here][PVLIB].
+here are helper libraries: [software libraries for Cyrillic transliteration][PVLIB].
 
 And if you need a quick online transliteration from Cyrillic,
-[here is the page][PVTR].
+here is the page: [Cyrillic transliteration online][PVTR].
 
 
 [WROU]: https://en.wikipedia.org/wiki/Romanization_of_Ukrainian
