@@ -91,6 +91,8 @@ Reference card ([IPA][IPAU]):
     other letters are generally intuitive:
       a b d e f g i k l m n o p r s t v z
 
+Play a game of wordle in Ukrainian Latin: [Slovo][SLOVO].
+
 If you are writing software that includes Cyrillic transliteration,
 here are helper libraries: [software libraries for Cyrillic transliteration][PVLIB].
 
@@ -108,3 +110,4 @@ here is the page: [Cyrillic transliteration online][PVTR].
 [PVTR]: https://paiv.github.io/latynka/en/convert.html
 [PVKBD]: https://paiv.github.io/latynka-keyboard/
 [PVLIB]: https://paiv.github.io/uklatn/
+[SLOVO]: https://paiv.github.io/latynka/wordle.html
