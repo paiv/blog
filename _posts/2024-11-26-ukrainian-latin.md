@@ -91,13 +91,12 @@ Reference card ([IPA][IPAU]):
     other letters are generally intuitive:
       a b d e f g i k l m n o p r s t v z
 
-Play a game of wordle in Ukrainian Latin: [Slovo][SLOVO].
 
-If you are writing software that includes Cyrillic transliteration,
-here are helper libraries: [software libraries for Cyrillic transliteration][PVLIB].
+See also:
 
-And if you need a quick online transliteration from Cyrillic,
-here is the page: [Cyrillic transliteration online][PVTR].
+- Play a game of wordle in Ukrainian Latin: [Slovo][SLOVO]
+- [Software libraries for Cyrillic transliteration][PVLIB]
+- [Cyrillic transliteration web page][PVTR].
 
 
 [WROU]: https://en.wikipedia.org/wiki/Romanization_of_Ukrainian
