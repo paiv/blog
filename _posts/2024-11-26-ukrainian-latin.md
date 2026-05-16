@@ -13,7 +13,7 @@ Ukrainian writing system is traditionally based on Cyrillic alphabet, for exampl
 this pangram:
 
     Хвацький юшковар Філіп щодня на ґанку
-    готує сім'ї вечерю з жаб.
+    готує сімʼї вечерю з жаб.
 
 And so, in communication with Western countries, there has always been
 a need to represent Ukrainian texts, places and personal names in Latin script.
@@ -42,12 +42,12 @@ without diacritics:
 system A
 
     Xvacjkyj juškovar Filip ŝodnja na ganku
-    ğotuje sim'ï večerju z žab.
+    ğotuje simʼï večerju z žab.
 
 system B
 
     Khvacjkyj jushkovar Filip shchodnja na ganku
-    ghotuje sim'ji vecherju z zhab.
+    ghotuje simʼji vecherju z zhab.
 
 Here is a comparison of city names written in new and the legacy system
 ([see the full list][PVKAT])
@@ -65,7 +65,7 @@ As a national standard, DSTU 9112 is expected to replace legacy systems over tim
 The movement for the complete replacement of Cyrillic with the Latin alphabet
 is practically non-existent these days. It is too radical, without major benefits.
 At the same time, the need to write Ukrainian language in Latin script
-has always been present. Ukraine's recent national standard meets this need
+has always been present. Ukraine’s recent national standard meets this need
 with a nice system.
 
 If you want to practice Ukrainian Latin, I suggest adopting DSTU 9112. It is good
@@ -77,7 +77,7 @@ Reference card ([IPA][IPAU]):
 
     ◌j, consonant+j forms a digraph, palatalizing the consonant:
       nja /nʲa/, cje /t͡sʲɛ/, sjk /sʲk/
-    j in other positions: j /j/ m'ja /mjɑ/, p'je /pjɛ/, juk /juk/
+    j in other positions: j /j/ mʼja /mjɑ/, pʼje /pjɛ/, juk /juk/
     u /u/
     y /ɪ/
     ï, ji /ji/
