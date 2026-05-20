@@ -94,9 +94,9 @@ Reference card ([IPA][IPAU]):
 
 See also:
 
-- Play a game of wordle in Ukrainian Latin: [Slovo][SLOVO]
+- [Slovo][SLOVO]: play a game of wordle in Ukrainian Latin
 - [Software libraries for Cyrillic transliteration][PVLIB]
-- [Cyrillic transliteration web page][PVTR].
+- [Cyrillic transliteration web page][PVTR]
 
 
 [WROU]: https://en.wikipedia.org/wiki/Romanization_of_Ukrainian
